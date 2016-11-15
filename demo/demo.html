@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="A demo of Boost JS Carousel">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Boost JS Carousel Demo</title>
+        <link rel="stylesheet" href="demo.css">
+    </head>
+    <body>
+        <ol id="carousel" data-init="carousel" class="carousel">
+            <li class="carousel-slide">Slide 1</li>
+            <li class="carousel-slide">Slide 2</li>
+            <li class="carousel-slide">Slide 3</li>
+        </ol>
+        <button class="carousel-direction" data-bind="#carousel" data-role="next">Next</button>
+        <button class="carousel-direction" data-bind="#carousel" data-role="prev">Previous</button>
+        <ol data-bind="#carousel" data-role="nav" class="carousel-nav">
+            <li class="carousel-nav-item"></li>
+            <li class="carousel-nav-item"></li>
+            <li class="carousel-nav-item"></li>
+        </ol>
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+        <script src="https://cdn.rawgit.com/marksmccann/boost-js/master/dist/boost.min.js"></script>
+        <script src="../src/carousel.js"></script>
+        <script>
+            var boost = $.fn.boost;
+            var carousel = $.fn.boost.carousel;
+            $.fn.carousel = boost( carousel.plugin, carousel.defaults );
+            boost.auto();
+        </script>
+    </body>
+</html>
