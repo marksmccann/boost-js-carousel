@@ -154,21 +154,6 @@
         }
     }
 
-    /*
-
-    To Add:
-
-    prevClass: 'was-active',
-    nextClass: 'is-next',
-
-    slideOrder = {
-        '-1':
-         '0':
-        '+1':
-    }
-
-    */
-
     var plugin = {
         plugin: Carousel,
         defaults: {
