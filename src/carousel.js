@@ -25,11 +25,13 @@
             }
         });
         // add an nav indicator elements to corresponding slide
-        inst.roles.nav.each(function(){
-            $(this).children().each(function(i){
-                inst.slides[i] = inst.slides[i].add(this);
+        if( inst.roles.hasOwnProperty('nav') ) {
+            inst.roles.nav.each(function(){
+                $(this).children().each(function(i){
+                    inst.slides[i] = inst.slides[i].add(this);
+                });
             });
-        });
+        }
         // add active class to active slide and nav indicators
         inst.slides[ inst.activeSlide ].addClass( inst.settings.activeClass );
         // add previous class to previous slide
@@ -37,21 +39,27 @@
         // add next class to next slide
         inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
         // bind click event to triggers that go to next slide
-        inst.roles.next.on( 'click', function(e){
-            e.preventDefault(); inst.next();
-        });
-        // bind click event to triggers that go to previous slide
-        inst.roles.prev.on( 'click', function(e){
-            e.preventDefault(); inst.prev();
-        });
-        // bind click event to triggers that go to specific slide
-        inst.roles.nav.children().each(function( i ){
-            $(this).on( 'click', function( e ){
-                e.preventDefault();
-                inst.changeTo( i );
+        if( inst.roles.hasOwnProperty('next') ) {
+            inst.roles.next.on( 'click', function(e){
+                e.preventDefault(); inst.next();
             });
+        }
+        // bind click event to triggers that go to previous slide
+        if( inst.roles.hasOwnProperty('prev') ) {
+            inst.roles.prev.on( 'click', function(e){
+                e.preventDefault(); inst.prev();
+            });
+        }
+        // bind click event to triggers that go to specific slide
+        if( inst.roles.hasOwnProperty('nav') ) {
+            inst.roles.nav.children().each(function( i ){
+                $(this).on( 'click', function( e ){
+                    e.preventDefault();
+                    inst.changeTo( i );
+                });
 
-        })
+            });
+        }
         // stop the carousel when hovering
         if( inst.settings.pauseOnHover ) {
             // stop carousel when mouse hovers over slider
