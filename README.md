@@ -11,7 +11,7 @@ npm install boost-js-carousel
 ```
 Install in browser:
 ```html
-<script src="https://cdn.rawgit.com/marksmccann/boost-js-carousel/master/dist/carousel.min.js"></script>
+<script src="https://cdn.rawgit.com/marksmccann/boost-js-carousel/v0.0.1/dist/carousel.min.js"></script>
 ```
 
 Usage
@@ -54,14 +54,16 @@ Options
 --------------------------------------
 Name | Default | Description
 --- | --- | ---
-activeClass | `"is-open"` | the class added to handle and drawer when active
+activeClass | `"is-active"` | the class added to slide and nav when active
+nextClass | `"is-next"` | the class added to slide and nav when on deck
+prevClass | `"is-prev"` | the class added to slide and nav when just active
 intervalSpeed | `5000` | time between slides in milliseconds
 startAfter | `0` | interval before starting show, set to -1 to prevent start
 startOnSlide | `0` | starts the slide show on this slide
 pauseOnHover | `true` | stops the show while cursor hovers over source element
 resetInterval | `true` | resets time between slides after a change
 onChange | `null` | a callback function called when slides change
-onInit | `null` | a callback function called when plugin is intialized
+onInit | `null` | a callback function called when plugin is initialized
 ### Usage
 ```javascript
 $('#carousel').carousel({
@@ -108,6 +110,16 @@ instance.start();
 Resets the timer for the interval to 0.
 ```javascript
 instance.reset();
+```
+### nextSlide()
+The number of the next slide relative to the active slide.
+```javascript
+instance.nextSlide();
+```
+### prevSlide()
+The number of the previous slide relative to the active slide.
+```javascript
+instance.prevSlide();
 ```
 ### intervalTimer
 The id of the interval timer being used for the slide show.

@@ -32,6 +32,10 @@
         });
         // add active class to active slide and nav indicators
         inst.slides[ inst.activeSlide ].addClass( inst.settings.activeClass );
+        // add previous class to previous slide
+        inst.slides[ inst.prevSlide() ].addClass( inst.settings.prevClass );
+        // add next class to next slide
+        inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
         // bind click event to triggers that go to next slide
         inst.roles.next.on( 'click', function(e){
             e.preventDefault(); inst.next();
@@ -55,7 +59,6 @@
             // restart carousel when mouse leaves slider
             inst.source.on( "mouseleave", function(){ inst.start(); });
         }
-        
         // if slider is set to automatically run, start the slider
         if( inst.settings.startAfter > -1 ) {
             setTimeout( function(){
@@ -77,12 +80,16 @@
             // make sure slide number is 1) not negative 2) not greater than
             // array length 3) not the currently active slide
             if( slideNum >= 0 && slideNum < inst.slides.length && slideNum !== inst.activeSlide ) {
-                // remove class from currently active slide to hide it
-                inst.slides[ inst.activeSlide ].removeClass(inst.settings.activeClass);
-                // add class to newly active slide to show it
-                inst.slides[ slideNum ].addClass(inst.settings.activeClass);
-                // reset active slide
+                // remove classes from previous, active, and next;
+                inst.slides[ inst.prevSlide() ].removeClass( inst.settings.prevClass );
+                inst.slides[ inst.activeSlide ].removeClass( inst.settings.activeClass );
+                inst.slides[ inst.nextSlide() ].removeClass( inst.settings.nextClass );
+                // update active slide
                 inst.activeSlide = slideNum;
+                // add classes to new previous, active, and next;
+                inst.slides[ inst.prevSlide() ].addClass( inst.settings.prevClass );
+                inst.slides[ inst.activeSlide ].addClass( inst.settings.activeClass );
+                inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
                 // reset interval
                 if( inst.settings.resetInterval ) inst.reset();
                 // run callbacks
@@ -97,10 +104,8 @@
          * @param {function} optional callback
          */
         next: function( callback ) {
-            // if the last slide...
-            var next = this.activeSlide === this.slides.length-1 ? 0 : this.activeSlide+1;
             // go to specified slide
-            this.changeTo( next, callback );
+            this.changeTo( this.nextSlide(), callback );
             // return instance
             return this;
         },
@@ -109,10 +114,8 @@
          * @param {function} optional callback
          */
         prev: function( callback ) {
-            // if the first slide...
-            var prev = this.activeSlide === 0 ? this.slides.length-1 : this.activeSlide-1;
             // go to specified slide
-            this.changeTo( prev, callback );
+            this.changeTo( this.prevSlide(), callback );
             // return instance
             return this;
         },
@@ -151,6 +154,20 @@
         reset: function( callback ) {
             // stop and then restart the carousel
             return this.stop().start( callback );
+        },
+        /**
+         * get the number of the next slide relative to the active slide
+         * @return {integer} instance
+         */
+        nextSlide: function() {
+            return this.activeSlide === this.slides.length-1 ? 0 : this.activeSlide+1;
+        },
+        /**
+         * get the the number of the previous slide relative to the active slide
+         * @return {integer} instance
+         */
+        prevSlide: function() {
+            return this.activeSlide === 0 ? this.slides.length-1 : this.activeSlide-1;
         }
     }
 
@@ -158,6 +175,8 @@
         plugin: Carousel,
         defaults: {
             activeClass: 'is-active',
+            prevClass: 'is-prev',
+            nextClass: 'is-next',
             intervalSpeed: 5000,
             startAfter: 0,
             startOnSlide: 0,
