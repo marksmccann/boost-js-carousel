@@ -73,6 +73,8 @@
                 inst.start();
             }, inst.settings.startAfter );
         }
+        // run onInit callback if exists
+        if( $.isFunction(inst.settings.onInit) ) inst.settings.onInit.call(inst);
     }
 
     Carousel.prototype = {
