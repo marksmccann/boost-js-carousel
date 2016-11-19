@@ -1,4 +1,4 @@
-Boost JS Carousel
+Boost JS Carousel [![Build Status](https://travis-ci.org/marksmccann/boost-js-carousel.svg?branch=master)](https://travis-ci.org/marksmccann/boost-js-carousel)
 ==================================================
 A style-free carousel plugin for jQuery and [Boost JS](https://github.com/marksmccann/boost-js). While other plugins style and arrange your carousel for you, this plugin only handles the functionality, leaving the layout and styling up to you.
 
