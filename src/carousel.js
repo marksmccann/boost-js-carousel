@@ -3,7 +3,7 @@
  * A style-free carousel plugin for jQuery and Boost JS
  * @author Mark McCann (www.markmccann.me)
  * @license MIT
- * @version 0.0.1
+ * @version 0.0.2
  * @requires jQuery, boost-js
  */
 
@@ -101,7 +101,9 @@
                 inst.slides[ inst.activeSlide ].addClass( inst.settings.activeClass );
                 inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
                 // reset interval
-                if( inst.settings.resetInterval ) inst.reset();
+                if( inst.intervalTimer ) {
+                    if( inst.settings.resetInterval ) inst.reset();
+                }
                 // run callbacks
                 if( $.isFunction(callback) ) callback.call(inst);
                 if( $.isFunction(inst.settings.onChange) ) inst.settings.onChange.call(inst);

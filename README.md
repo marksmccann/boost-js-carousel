@@ -11,7 +11,7 @@ npm install boost-js-carousel
 ```
 Install in browser:
 ```html
-<script src="https://cdn.rawgit.com/marksmccann/boost-js-carousel/v0.0.1/dist/carousel.min.js"></script>
+<script src="https://cdn.rawgit.com/marksmccann/boost-js-carousel/v0.0.2/dist/carousel.min.js"></script>
 ```
 
 Usage
