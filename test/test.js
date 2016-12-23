@@ -435,4 +435,20 @@ describe('Boost JS Carousel', function () {
 
     });
 
+    describe('isRunning()', function () {
+
+        it('should return true if the carousel is running', function () {
+            document.body.innerHTML = template.default;
+            var inst = $('#carousel').carousel().start();
+            assert.isTrue( inst.isRunning() );
+        });
+
+        it('should return false if the carousel is NOT running', function () {
+            document.body.innerHTML = template.default;
+            var inst = $('#carousel').carousel({startAfter:-1});
+            assert.isFalse( inst.isRunning() );
+        });
+
+    });
+
 });

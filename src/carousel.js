@@ -3,7 +3,7 @@
  * A style-free carousel plugin for jQuery and Boost JS
  * @author Mark McCann (www.markmccann.me)
  * @license MIT
- * @version 0.0.2
+ * @version 0.1.0
  * @requires jQuery, boost-js
  */
 
@@ -57,15 +57,18 @@
                     e.preventDefault();
                     inst.changeTo( i );
                 });
-
             });
         }
         // stop the carousel when hovering
         if( inst.settings.pauseOnHover ) {
             // stop carousel when mouse hovers over slider
-            inst.source.on( "mouseenter", function(){ inst.stop(); });
+            inst.source.on( "mouseenter", function(){
+                if( inst.isRunning() ) inst.stop();
+            });
             // restart carousel when mouse leaves slider
-            inst.source.on( "mouseleave", function(){ inst.start(); });
+            inst.source.on( "mouseleave", function(){
+                if( inst.isRunning() ) inst.start();
+            });
         }
         // if slider is set to automatically run, start the slider
         if( inst.settings.startAfter > -1 ) {
@@ -100,10 +103,8 @@
                 inst.slides[ inst.prevSlide() ].addClass( inst.settings.prevClass );
                 inst.slides[ inst.activeSlide ].addClass( inst.settings.activeClass );
                 inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
-                // reset interval
-                if( inst.intervalTimer ) {
-                    if( inst.settings.resetInterval ) inst.reset();
-                }
+                // reset interval if carousel is running
+                if( inst.isRunning() && inst.settings.resetInterval ) inst.reset();
                 // run callbacks
                 if( $.isFunction(callback) ) callback.call(inst);
                 if( $.isFunction(inst.settings.onChange) ) inst.settings.onChange.call(inst);
@@ -152,7 +153,7 @@
          * @param {function} optional callback
          */
         stop: function( callback ) {
-            // end the interval
+            // end the interval and reset attribute
             clearTimeout( this.intervalTimer );
             // run callback
             if( $.isFunction(callback) ) callback.call(this);
@@ -180,6 +181,13 @@
          */
         prevSlide: function() {
             return this.activeSlide === 0 ? this.slides.length-1 : this.activeSlide-1;
+        },
+        /**
+         * determines if the carousel is running or not
+         * @return {boolean}
+         */
+        isRunning: function() {
+            return typeof this.intervalTimer !== 'undefined'
         }
     }
 

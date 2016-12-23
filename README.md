@@ -11,7 +11,7 @@ npm install boost-js-carousel
 ```
 Install in browser:
 ```html
-<script src="https://cdn.rawgit.com/marksmccann/boost-js-carousel/v0.0.2/dist/carousel.min.js"></script>
+<script src="https://cdn.rawgit.com/marksmccann/boost-js-carousel/v0.1.0/dist/carousel.min.js"></script>
 ```
 
 Usage
@@ -111,6 +111,11 @@ Resets the timer for the interval to 0.
 ```javascript
 instance.reset();
 ```
+### isRunning( callback )
+Returns boolean if carousel is running or not.
+```javascript
+instance.isRunning();
+```
 ### nextSlide()
 The number of the next slide relative to the active slide.
 ```javascript
@@ -134,7 +139,7 @@ instance.activeSlide;
 ### slides
 An array of jquery objects organized by slide number. Navigation items are grouped with their respective slide.
 ```javascript
-instance.slide; // [ $([0]:slide1,[1]:nav1), ... ]
+instance.slides; // [ $([0]:slide1,[1]:nav1), ... ]
 ```
 
 Running Tests

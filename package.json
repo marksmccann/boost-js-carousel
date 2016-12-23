@@ -1,7 +1,7 @@
 {
   "name": "boost-js-carousel",
   "title": "Boost JS Carousel",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A style-free carousel plugin for jQuery and Boost JS",
   "main": "src/carousel.js",
   "scripts": {
