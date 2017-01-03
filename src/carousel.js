@@ -9,56 +9,89 @@
 
 (function(){
 
+    /**
+     * generates a random 4 character string
+     * @return {string} random
+     */
+    function uniqueId() {
+        return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4);
+    }
+
     var Carousel = function() {
         var inst = this;
         // attribute to store timer id
         inst.intervalTimer;
         // attribute to store active slide index
         inst.activeSlide = inst.settings.startOnSlide;
+        // generate new id for carousel if one doesn't exist
+        var id = inst.id !== null ? inst.id : 'carousel-'+ uniqueId()
         // slides sorted by index and if active class present
         // store the index as the active slide
         inst.slides = [];
         inst.source.children().each(function(i){
-            inst.slides.push( $(this) );
+            // add attributes to each slide and add to array
+            inst.slides.push( $(this)
+                .attr('role','tabpanel')
+                .attr('id', (this.id===''?id+'-slide-'+i:this.id))
+            );
+            // update active slide index if class exists
             if( $(this).hasClass( inst.settings.activeClass ) ) {
                 inst.activeSlide = i;
             }
         });
-        // add an nav indicator elements to corresponding slide
-        if( inst.roles.hasOwnProperty('nav') ) {
-            inst.roles.nav.each(function(){
-                $(this).children().each(function(i){
-                    inst.slides[i] = inst.slides[i].add(this);
-                });
-            });
-        }
-        // add active class to active slide and nav indicators
-        inst.slides[ inst.activeSlide ].addClass( inst.settings.activeClass );
-        // add previous class to previous slide
-        inst.slides[ inst.prevSlide() ].addClass( inst.settings.prevClass );
-        // add next class to next slide
-        inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
         // bind click event to triggers that go to next slide
         if( inst.roles.hasOwnProperty('next') ) {
-            inst.roles.next.on( 'click', function(e){
-                e.preventDefault(); inst.next();
-            });
+            inst.roles.next
+                .attr('role', 'button')
+                .attr('aria-label', 'Show slide '+(this.nextSlide()+1)+' of '+this.slides.length)
+                .on( 'click', function(e){
+                    e.preventDefault(); inst.next();
+                });
         }
         // bind click event to triggers that go to previous slide
         if( inst.roles.hasOwnProperty('prev') ) {
-            inst.roles.prev.on( 'click', function(e){
-                e.preventDefault(); inst.prev();
-            });
+            inst.roles.prev
+                .attr('role', 'button')
+                .attr('aria-label', 'Show slide '+(this.prevSlide()+1)+' of '+this.slides.length)
+                .on( 'click', function(e){
+                    e.preventDefault(); inst.prev();
+                });
         }
         // bind click event to triggers that go to specific slide
         if( inst.roles.hasOwnProperty('nav') ) {
-            inst.roles.nav.children().each(function( i ){
-                $(this).on( 'click', function( e ){
-                    e.preventDefault();
-                    inst.changeTo( i );
+            inst.roles.nav
+                .attr('role','tablist')
+                .attr('tabindex', '0')
+                .on('keydown', function(e){
+                    // up arrow or right arrow
+                    if(e.keyCode === 38 || e.keyCode === 39) inst.next();
+                    // down arrow or left arrow
+                    if(e.keyCode === 40 || e.keyCode === 37) inst.prev();
+                })
+                .children().each(function(i){
+                    $(this)
+                        .attr('tabindex', '-1')
+                        .attr('role', 'tab')
+                        .attr('aria-selected', 'false')
+                        .attr('id', (this.id===''?id+'-indicator-'+i:this.id))
+                        .attr('aria-labelledby', inst.slides[i][0].id)
+                        .attr('aria-controls', inst.slides[i][0].id)
+                        .on( 'click', function( e ){
+                            e.preventDefault();
+                            inst.changeTo( i );
+                        });
+                    inst.slides[i] = inst.slides[i].add(this);
                 });
-            });
+            inst.roles.nav
+                .attr('aria-labelledby', inst.slides[ inst.activeSlide ][1].id )
+                .attr('aria-activedescendant', inst.slides[ inst.activeSlide ][1].id );
         }
+        // update active classes and attributes for load state
+        inst.slides[ inst.activeSlide ]
+            .addClass( inst.settings.activeClass )
+            .each(function(i){ if(i>0) $(this).attr('aria-selected', 'true'); });
+        inst.slides[ inst.prevSlide() ].addClass( inst.settings.prevClass );
+        inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
         // stop the carousel when hovering
         if( inst.settings.pauseOnHover ) {
             // stop carousel when mouse hovers over slider
@@ -95,14 +128,30 @@
             if( slideNum >= 0 && slideNum < inst.slides.length && slideNum !== inst.activeSlide ) {
                 // remove classes from previous, active, and next;
                 inst.slides[ inst.prevSlide() ].removeClass( inst.settings.prevClass );
-                inst.slides[ inst.activeSlide ].removeClass( inst.settings.activeClass );
+                inst.slides[ inst.activeSlide ]
+                    .removeClass( inst.settings.activeClass )
+                    .each(function(i){ if(i>0) $(this).attr('aria-selected', 'false'); });
                 inst.slides[ inst.nextSlide() ].removeClass( inst.settings.nextClass );
                 // update active slide
                 inst.activeSlide = slideNum;
                 // add classes to new previous, active, and next;
                 inst.slides[ inst.prevSlide() ].addClass( inst.settings.prevClass );
-                inst.slides[ inst.activeSlide ].addClass( inst.settings.activeClass );
+                inst.slides[ inst.activeSlide ]
+                    .addClass( inst.settings.activeClass )
+                    .each(function(i){ if(i>0) $(this).attr('aria-selected', 'true'); });
                 inst.slides[ inst.nextSlide() ].addClass( inst.settings.nextClass );
+                // update attributes
+                if( inst.roles.hasOwnProperty('next') ) {
+                    inst.roles.next.attr('aria-label', 'Show slide '+(this.nextSlide()+1)+' of '+this.slides.length)
+                } 
+                if( inst.roles.hasOwnProperty('prev') ) {
+                    inst.roles.prev.attr('aria-label', 'Show slide '+(this.prevSlide()+1)+' of '+this.slides.length)
+                }
+                if( inst.roles.hasOwnProperty('nav') ) {
+                    inst.roles.nav
+                        .attr('aria-labelledby', inst.slides[ inst.activeSlide ][1].id )
+                        .attr('aria-activedescendant', inst.slides[ inst.activeSlide ][1].id );
+                }
                 // reset interval if carousel is running
                 if( inst.isRunning() && inst.settings.resetInterval ) inst.reset();
                 // run callbacks

@@ -8,13 +8,13 @@
         <link rel="stylesheet" href="demo.css">
     </head>
     <body>
-        <ol id="carousel" data-init="carousel" class="carousel">
-            <li class="carousel-slide">Slide 1</li>
-            <li class="carousel-slide">Slide 2</li>
-            <li class="carousel-slide">Slide 3</li>
-        </ol>
-        <button class="carousel-direction" data-bind="#carousel" data-role="next">Next</button>
-        <button class="carousel-direction" data-bind="#carousel" data-role="prev">Previous</button>
+        <div id="carousel" data-init="carousel" class="carousel">
+            <div class="carousel-slide">Slide 1</div>
+            <div class="carousel-slide">Slide 2</div>
+            <div class="carousel-slide">Slide 3</div>
+        </div>
+        <a class="carousel-direction" href="#carousel" data-role="prev">Previous</a>
+        <a class="carousel-direction" href="#carousel" data-role="next">Next</a><br>
         <ol data-bind="#carousel" data-role="nav" class="carousel-nav">
             <li class="carousel-nav-item"></li>
             <li class="carousel-nav-item"></li>
