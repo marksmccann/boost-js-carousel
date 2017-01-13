@@ -1,6 +1,6 @@
 Boost JS Carousel [![Build Status](https://travis-ci.org/marksmccann/boost-js-carousel.svg?branch=master)](https://travis-ci.org/marksmccann/boost-js-carousel)
 ==================================================
-A style-free carousel plugin for jQuery and [Boost JS](https://github.com/marksmccann/boost-js). While other plugins style and arrange your carousel for you, this plugin only handles the functionality, leaving the layout and styling up to you.
+A style-free and accessible carousel plugin for jQuery and [Boost JS](https://github.com/marksmccann/boost-js). While other plugins style and arrange your carousel for you, this plugin only handles the functionality, leaving the layout and styling up to you.
 
 
 Installation
@@ -31,16 +31,16 @@ $.fn.carousel = boost( carousel.plugin, carousel.defaults );
 ### Markup Structure
 ```html
 <ol id="carousel">
-    <li class="is-active">Slide 1</li>
+    <li>Slide 1</li>
     <li>Slide 2</li>
     <li>Slide 3</li>
 </ol>
 <a href="#carousel" data-role="next">Next</a>
 <a href="#carousel" data-role="prev">Previous</a>
 <ol data-bind="#carousel" data-role="nav">
-    <li class="is-active"></li>
-    <li></li>
-    <li></li>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
 </ol>
 ```
 *Note: `data-bind` and `href` are used to link the element to the instance, `data-role` is used to define the element's role in that instance. See [Boost JS](https://github.com/marksmccann/boost-js) for more details.*
@@ -54,12 +54,12 @@ Options
 --------------------------------------
 Name | Default | Description
 --- | --- | ---
-activeClass | `"is-active"` | the class added to slide and nav when active
-nextClass | `"is-next"` | the class added to slide and nav when on deck
-prevClass | `"is-prev"` | the class added to slide and nav when just active
+activeClass | `"is-active"` | the class added to slide and nav indicator when active
+nextClass | `"is-next"` | the class added to slide and nav indicator when on deck
+prevClass | `"is-prev"` | the class added to slide and nav indicator when was just active
 intervalSpeed | `5000` | time between slides in milliseconds
 startAfter | `0` | interval before starting show, set to -1 to prevent start
-startOnSlide | `0` | starts the slide show on this slide
+startOnSlide | `0` | starts the slide show on this slide #
 pauseOnHover | `true` | stops the show while cursor hovers over source element
 resetInterval | `true` | resets time between slides after a change
 onChange | `null` | a callback function called when slides change
@@ -87,7 +87,7 @@ instance.changeTo( 1, function(){
 });
 ```
 ### next( callback )
-Moves the slider to the next slide. In the case it is the last slide, the show starts over.
+Moves the slider to the next slide. In the case it is the last slide, it starts over.
 ```javascript
 instance.next();
 ```
@@ -97,14 +97,14 @@ Moves the slider to the previous slide. In the case it is the first slide, it re
 instance.prev();
 ```
 ### start( callback )
-Starts the carousel; changing slides at the interval specified in the settings.
+Starts the carousel &mdash; changes slides at the interval specified in the settings.
 ```javascript
 instance.start();
 ```
 ### stop( callback )
-Stops the carousel. It will no longer change slides automatically.
+Stops the carousel &mdash; no longer changing slides automatically at interval.
 ```javascript
-instance.start();
+instance.stop();
 ```
 ### reset( callback )
 Resets the timer for the interval to 0.
@@ -114,7 +114,7 @@ instance.reset();
 ### isRunning( callback )
 Returns boolean if carousel is running or not.
 ```javascript
-instance.isRunning();
+instance.isRunning(); // true || false
 ```
 ### nextSlide()
 The number of the next slide relative to the active slide.
