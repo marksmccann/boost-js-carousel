@@ -35,15 +35,15 @@ $.fn.carousel = boost( carousel.plugin, carousel.defaults );
     <li>Slide 2</li>
     <li>Slide 3</li>
 </ol>
-<button data-bind="#carousel" data-role="next">Next</button>
-<button data-bind="#carousel" data-role="prev">Previous</button>
+<a href="#carousel" data-role="next">Next</a>
+<a href="#carousel" data-role="prev">Previous</a>
 <ol data-bind="#carousel" data-role="nav">
     <li class="is-active"></li>
     <li></li>
     <li></li>
 </ol>
 ```
-*Note: `data-bind` is used to link the element to the instance, `data-role` is used to define the element's role in that instance. See [Boost JS](https://github.com/marksmccann/boost-js) for more details.*
+*Note: `data-bind` and `href` are used to link the element to the instance, `data-role` is used to define the element's role in that instance. See [Boost JS](https://github.com/marksmccann/boost-js) for more details.*
 
 ### Instantiate Plugin
 ```javascript
