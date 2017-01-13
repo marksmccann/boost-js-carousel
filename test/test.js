@@ -3,12 +3,12 @@ var jsdom = require('mocha-jsdom');
 
 var template = {
     default: '<ol id="carousel">'+
-        '<li></li><li class="is-active"></li><li></li>'+
+        '<li>Slide 1</li><li class="is-active">Slide 2</li><li>Slide 3</li>'+
     '</ol>'+
-    '<button data-bind="#carousel" data-role="next"></button>'+
-    '<button data-bind="#carousel" data-role="prev"></button>'+
+    '<a href="#carousel" data-role="next">Next</a>'+
+    '<a href="#carousel" data-role="prev">Previous</a>'+
     '<ol data-bind="#carousel" data-role="nav">'+
-        '<li></li><li class="is-active"></li><li></li>'+
+        '<li>1</li><li class="is-active">2</li><li>3</li>'+
     '</ol>',
     noActive: '<ol id="carousel">'+
         '<li></li><li></li><li></li>'+
@@ -54,6 +54,10 @@ var template = {
         '<li></li><li></li><li></li>'+
     '</ol><ol data-bind="#carousel" data-role="nav">'+
         '<li></li><li></li><li></li>'+
+    '</ol>',
+    noID: '<ol><li></li><li></li><li></li></ol>',
+    slideID: '<ol id="carousel">'+
+        '<li id="slide1" role="test"></li><li></li><li></li>'+
     '</ol>'
 }
 
@@ -92,6 +96,7 @@ describe('Boost JS Carousel', function () {
         });
 
         it('should set active slide to slide with activeClass', function () {
+            assert.isTrue( inst.slides[1].first().hasClass( 'is-active' ) );
             assert.strictEqual( inst.activeSlide, 1 );
         });
 
@@ -99,6 +104,97 @@ describe('Boost JS Carousel', function () {
             assert.lengthOf( inst.slides[0], 2 );
             assert.lengthOf( inst.slides[1], 2 );
             assert.lengthOf( inst.slides[2], 2 );
+        });
+
+        it('should add attributes to each slide element', function () {
+            var exist = true;
+            for( var i=0; i<inst.slides.length; i++ ) {
+                var slide = inst.slides[i].first();
+                // role="tabpanel"
+                if( slide.attr('role') !== 'tabpanel' ) {
+                    exists = false;
+                    break;
+                }
+                // id="carousel-slide-[i]"
+                if( slide.attr('id') !== inst.id+'-slide-'+i ) {
+                    exists = false;
+                    break;
+                }
+            }
+            assert.isTrue( exist );
+        });
+
+        it('should add attributes to \'next\' slide trigger', function () {
+            assert.match( inst.roles.next.attr('role'), /button/ );
+            assert.match( inst.roles.next.attr('aria-label'), /Show slide 3 of 3/ );
+        });
+
+        it('should active next slide on click of \'next\' trigger', function () {
+            assert.strictEqual( inst.activeSlide, 1 );
+            inst.roles.next.trigger( 'click' );
+            assert.strictEqual( inst.activeSlide, 2 );
+        });
+
+        it('should add attributes to \'prev\' slide trigger', function () {
+            assert.match( inst.roles.prev.attr('role'), /button/ );
+            assert.match( inst.roles.prev.attr('aria-label'), /Show slide 2 of 3/ );
+        });
+
+        it('should active next slide on click of \'prev\' trigger', function () {
+            assert.strictEqual( inst.activeSlide, 2 );
+            inst.roles.prev.trigger( 'click' );
+            assert.strictEqual( inst.activeSlide, 1 );
+        });
+
+        it('should add attributes to \'nav\' list', function () {
+            assert.match( inst.roles.nav.attr('role'), /tablist/ );
+            assert.match( inst.roles.nav.attr('tabindex'), /0/ );
+            assert.match( inst.roles.nav.attr('aria-labelledby'), /carousel-indicator-1/ );
+            assert.match( inst.roles.nav.attr('aria-activedescendant'), /carousel-indicator-1/ );
+        });
+
+        it('should go the next slide on press of up or right arrow keys on nav', function () {
+            assert.strictEqual( inst.activeSlide, 1 );
+            inst.roles.nav.trigger($.Event("keydown", { keyCode: 39 }));
+            assert.strictEqual( inst.activeSlide, 2 );
+            inst.roles.nav.trigger($.Event("keydown", { keyCode: 38 }));
+            assert.strictEqual( inst.activeSlide, 0 );
+        });
+
+        it('should go the previous slide on press of down or left arrow keys on nav', function () {
+            assert.strictEqual( inst.activeSlide, 0 );
+            inst.roles.nav.trigger($.Event("keydown", { keyCode: 37 }));
+            assert.strictEqual( inst.activeSlide, 2 );
+            inst.roles.nav.trigger($.Event("keydown", { keyCode: 40 }));
+            assert.strictEqual( inst.activeSlide, 1 );
+        });
+
+        it('should add attributes to each item in nav', function () {
+            var exist = true, items = inst.roles.nav.children();
+            for( var i=0; i<items.length; i++ ) {
+                var item = $(items[i]);
+                if( item.attr('tabindex') !== '-1'
+                 || item.attr('role') !== 'tab'
+                 || !item.attr('aria-selected')
+                 || item.attr('id') !== 'carousel-indicator-'+i
+                 || item.attr('aria-labelledby') !== 'carousel-slide-'+i
+                 || item.attr('aria-controls') !== 'carousel-slide-'+i ) {
+                    exists = false;
+                    break;
+                }
+            }
+            assert.isTrue( exist );
+        });
+
+        it('should update active attributes to slide and indicators', function () {
+            var active = inst.slides[ inst.activeSlide ];
+            assert.isTrue( active.first().hasClass( 'is-active' ) );
+            assert.match( active.last().attr( 'aria-selected' ), /true/ );
+        });
+
+        it('should add active classes to next and previous slides as well', function () {
+            assert.isTrue( inst.slides[ inst.nextSlide() ].first().hasClass( 'is-next' ) );
+            assert.isTrue( inst.slides[ inst.prevSlide() ].first().hasClass( 'is-prev' ) );
         });
 
         it('should add \'activeClass\' to first slide and nav if no class present', function () {
@@ -120,6 +216,19 @@ describe('Boost JS Carousel', function () {
             inst = $('#carousel').carousel();
             assert.match( document.querySelectorAll('li')[2].className, /is-prev/ );
             assert.match( document.querySelectorAll('li')[5].className, /is-prev/ );
+        });
+
+        it('should generate a unique id for carousel if one doesn\'t exist', function () {
+            document.body.innerHTML = template.noID;
+            inst = $('ol').carousel();
+            assert.match( inst.id, /carousel-[\w\d]{4}/ );
+        });
+
+        it('should use id of slide if it exists', function () {
+            document.body.innerHTML = template.slideID;
+            inst = $('#carousel').carousel();
+            assert.match( inst.slides[0][0].id, /slide1/ );
+            assert.match( inst.slides[1][0].id, /carousel-slide-1/ );
         });
 
     });
@@ -289,6 +398,20 @@ describe('Boost JS Carousel', function () {
             assert.isUndefined( inst.test );
         });
 
+        it('should remove active attributes from the old and add them to the new', function () {
+            document.body.innerHTML = template.default;
+            var inst = $('#carousel').carousel({startAfter: -1});
+            assert.isTrue( $(inst.slides[1][0]).hasClass('is-active') );
+            assert.isTrue( !$(inst.slides[2][0]).hasClass('is-active') );
+            assert.isTrue( $(inst.slides[1][1]).attr('aria-selected') === 'true' );
+            assert.isTrue( $(inst.slides[2][1]).attr('aria-selected') === 'false' );
+            inst.changeTo(2);
+            assert.isTrue( $(inst.slides[2][0]).hasClass('is-active') );
+            assert.isTrue( !$(inst.slides[1][0]).hasClass('is-active') );
+            assert.isTrue( $(inst.slides[2][1]).attr('aria-selected') === 'true' );
+            assert.isTrue( $(inst.slides[1][1]).attr('aria-selected') === 'false' );
+        });
+
         it('should update next, active, and previous classes', function () {
             document.body.innerHTML = template.default;
             var inst = $('#carousel').carousel({startAfter: -1});
@@ -299,6 +422,26 @@ describe('Boost JS Carousel', function () {
             assert.match(document.querySelectorAll('li')[0].className, /is-next/ );
             assert.match(document.querySelectorAll('li')[1].className, /is-prev/ );
             assert.match(document.querySelectorAll('li')[2].className, /is-active/ );
+        });
+
+        it('should update aria label on next and prev triggers', function () {
+            document.body.innerHTML = template.default;
+            var inst = $('#carousel').carousel({startAfter: -1});
+            assert.match( inst.roles.next.attr('aria-label'), /Show slide 3 of 3/ );
+            assert.match( inst.roles.prev.attr('aria-label'), /Show slide 1 of 3/ );
+            inst.changeTo(2);
+            assert.match( inst.roles.next.attr('aria-label'), /Show slide 1 of 3/ );
+            assert.match( inst.roles.prev.attr('aria-label'), /Show slide 2 of 3/ );
+        });
+
+        it('should update attributes on the nav element', function () {
+            document.body.innerHTML = template.default;
+            var inst = $('#carousel').carousel({startAfter: -1});
+            assert.match( inst.roles.nav.attr('aria-labelledby'), /carousel-indicator-1/ );
+            assert.match( inst.roles.nav.attr('aria-activedescendant'), /carousel-indicator-1/ );
+            inst.changeTo(2);
+            assert.match( inst.roles.nav.attr('aria-labelledby'), /carousel-indicator-2/ );
+            assert.match( inst.roles.nav.attr('aria-activedescendant'), /carousel-indicator-2/ );
         });
 
         it('should run callback function from parameter', function () {

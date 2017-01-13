@@ -3,7 +3,7 @@
  * A style-free carousel plugin for jQuery and Boost JS
  * @author Mark McCann (www.markmccann.me)
  * @license MIT
- * @version 0.1.0
+ * @version 0.2.0
  * @requires jQuery, boost-js
  */
 
@@ -24,7 +24,7 @@
         // attribute to store active slide index
         inst.activeSlide = inst.settings.startOnSlide;
         // generate new id for carousel if one doesn't exist
-        var id = inst.id !== null ? inst.id : 'carousel-'+ uniqueId()
+        if( !inst.id ) inst.id = 'carousel-'+ uniqueId();
         // slides sorted by index and if active class present
         // store the index as the active slide
         inst.slides = [];
@@ -32,14 +32,14 @@
             // add attributes to each slide and add to array
             inst.slides.push( $(this)
                 .attr('role','tabpanel')
-                .attr('id', (this.id===''?id+'-slide-'+i:this.id))
+                .attr('id', (this.id===''?inst.id+'-slide-'+i:this.id))
             );
             // update active slide index if class exists
             if( $(this).hasClass( inst.settings.activeClass ) ) {
                 inst.activeSlide = i;
             }
         });
-        // bind click event to triggers that go to next slide
+        // add attributes and events to 'next' trigger(s)
         if( inst.roles.hasOwnProperty('next') ) {
             inst.roles.next
                 .attr('role', 'button')
@@ -48,7 +48,7 @@
                     e.preventDefault(); inst.next();
                 });
         }
-        // bind click event to triggers that go to previous slide
+        // add attributes and events to 'previous' trigger(s)
         if( inst.roles.hasOwnProperty('prev') ) {
             inst.roles.prev
                 .attr('role', 'button')
@@ -57,7 +57,7 @@
                     e.preventDefault(); inst.prev();
                 });
         }
-        // bind click event to triggers that go to specific slide
+        // add attributes and events to the 'nav' list
         if( inst.roles.hasOwnProperty('nav') ) {
             inst.roles.nav
                 .attr('role','tablist')
@@ -73,7 +73,7 @@
                         .attr('tabindex', '-1')
                         .attr('role', 'tab')
                         .attr('aria-selected', 'false')
-                        .attr('id', (this.id===''?id+'-indicator-'+i:this.id))
+                        .attr('id', (this.id===''?inst.id+'-indicator-'+i:this.id))
                         .attr('aria-labelledby', inst.slides[i][0].id)
                         .attr('aria-controls', inst.slides[i][0].id)
                         .on( 'click', function( e ){
@@ -143,7 +143,7 @@
                 // update attributes
                 if( inst.roles.hasOwnProperty('next') ) {
                     inst.roles.next.attr('aria-label', 'Show slide '+(this.nextSlide()+1)+' of '+this.slides.length)
-                } 
+                }
                 if( inst.roles.hasOwnProperty('prev') ) {
                     inst.roles.prev.attr('aria-label', 'Show slide '+(this.prevSlide()+1)+' of '+this.slides.length)
                 }
