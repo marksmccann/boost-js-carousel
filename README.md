@@ -80,7 +80,7 @@ $('#carousel').carousel({
 API
 --------------------------------------
 ### changeTo( slideNumber, callback )
-Changes the carousel to the specified slide. Slide number starts with '0'. Optional `callback` function called after opening.
+Changes the carousel to the specified slide. Slide number starts with '0'. Optional `callback` function called after changing.
 ```javascript
 instance.changeTo( 1, function(){
     console.log("The second slide is now active.");
